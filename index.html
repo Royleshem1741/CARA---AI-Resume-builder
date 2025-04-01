@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- favicon -->
-    <link rel="icon" href="https://royleshem1741.github.io/CARA---AI-Resume-builder/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
     <title>CARA - Career & Resume Assistant</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -1151,7 +1151,7 @@
 
     <script>
         // API Configuration
-        const API_BASE_URL = 'https://cara-ai-resume-builder.onrender.com/api';
+        const API_BASE_URL = 'http://localhost:8000/api';
 
         // השלמה אוטומטית לשדה job-role
         const autocompleteStyle = `
@@ -1900,8 +1900,10 @@
                         confirmed_skills: this.confirmedSkills
                     });
                     
-                    // Save the filename for later use
+                    // Save the filename and content for later use
                     this.resumeFilename = generateResponse.filename;
+                    this.resumeContent = generateResponse.resume_content; // Store the content from server
+                    
                     
                     // Update UI
                     document.getElementById('resume-loading').classList.add('hidden');
@@ -1950,15 +1952,23 @@
                 });
             }
             
-            // Open resume in browser
             openResumeInBrowser() {
-                // This would depend on the specific implementation of your backend
-                // For now, just show a notification
-                this.showNotification('Opening resume in browser...', 'info');
-                
-                // In a real implementation, you might do something like:
-                // window.open('/open-resume?filename=' + encodeURIComponent(this.resumeFilename), '_blank');
+            if (this.resumeContent) {
+                // Open content in a new window
+                const newWindow = window.open('', '_blank');
+                if (newWindow) {
+                    newWindow.document.write(this.resumeContent);
+                    newWindow.document.title = this.resumeFilename;
+                    newWindow.document.close();
+                    
+                    this.showNotification('Resume opened in a new window. To save, use Ctrl+S or "Save As" in your browser.', 'info');
+                } else {
+                    this.showNotification('Browser blocked the popup. Please allow popups for this site.', 'error');
+                }
+            } else {
+                this.showNotification('Resume content is not available. Try generating it again.', 'error');
             }
+        }
             
             // Open the translate modal
             openTranslateModal() {
@@ -1983,6 +1993,11 @@
                     return;
                 }
                 
+                if (!this.resumeContent) {
+                    this.showNotification('Original resume content is not available', 'error');
+                    return;
+                }
+                
                 // Show loading
                 document.getElementById('translation-loading').classList.remove('hidden');
                 document.getElementById('start-translation-btn').classList.add('hidden');
@@ -1991,7 +2006,8 @@
                     // Call API to translate
                     const translateResponse = await this.apiRequest('translate-resume', 'POST', {
                         filename: this.resumeFilename,
-                        target_language: targetLanguage
+                        target_language: targetLanguage,
+                        resume_content: this.resumeContent  // Send the original content
                     });
                     
                     // Update UI with success
@@ -2001,8 +2017,25 @@
                     
                     // Set translated info
                     this.translatedFilename = translateResponse.translated_filename;
+                    this.translatedContent = translateResponse.translated_content; // Store translated content
                     document.getElementById('translated-language').textContent = targetLanguage;
                     document.getElementById('translated-filename').textContent = this.translatedFilename;
+                    
+                    // Add button to view translated version
+                    const viewButton = document.createElement('button');
+                    viewButton.className = 'btn btn-primary';
+                    viewButton.textContent = `View ${targetLanguage} Version`;
+                    viewButton.style.marginTop = '10px';
+                    viewButton.addEventListener('click', () => this.openTranslatedResume());
+                    
+                    const successCard = document.querySelector('#translation-success .card-body');
+                    // Check if view button already exists and remove it if so
+                    const existingButton = successCard.querySelector('button');
+                    if (existingButton) {
+                        successCard.removeChild(existingButton);
+                    }
+                    successCard.appendChild(viewButton);
+                    
                 } catch (error) {
                     console.error('Failed to translate resume:', error);
                     this.showNotification('Failed to translate resume. Please try again.', 'error');
@@ -2010,6 +2043,24 @@
                     // Hide loading and show the start button again
                     document.getElementById('translation-loading').classList.add('hidden');
                     document.getElementById('start-translation-btn').classList.remove('hidden');
+                }
+            }
+
+            openTranslatedResume() {
+                if (this.translatedContent) {
+                    // Open content in a new window
+                    const newWindow = window.open('', '_blank');
+                    if (newWindow) {
+                        newWindow.document.write(this.translatedContent);
+                        newWindow.document.title = this.translatedFilename;
+                        newWindow.document.close();
+                        
+                        this.showNotification('Translated version opened in a new window. To save, use Ctrl+S or "Save As" in your browser.', 'info');
+                    } else {
+                        this.showNotification('Browser blocked the popup. Please allow popups for this site.', 'error');
+                    }
+                } else {
+                    this.showNotification('Translated resume content is not available.', 'error');
                 }
             }
             

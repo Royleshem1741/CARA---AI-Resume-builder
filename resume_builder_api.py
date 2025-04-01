@@ -1,7 +1,5 @@
 from fastapi import FastAPI, HTTPException, Body
 from fastapi.middleware.cors import CORSMiddleware
-import tempfile
-from fastapi.responses import FileResponse
 from pydantic import BaseModel, EmailStr
 from typing import Dict, List, Optional, Any
 import os
@@ -671,17 +669,15 @@ async def generate_resume(request: ResumeGenerationRequest):
         
         # Get the resume text
         resume_text = response.choices[0].message.content
-        
-        #   שמירה בדסקטופ ישירות לא עובד = שמירת הקובץ בתיקייה זמנית (/tmp)
-        temp_dir = tempfile.gettempdir()
-        full_path = os.path.join(temp_dir, filename)
-        
-        # Save the resume
-        with open(full_path, "w", encoding="utf-8") as file:
-            file.write(resume_text)
-        
-        # Enhance HTML if needed
+
+         # צור קובץ זמני רק אם צריך לשפר את ה-HTML
         if resume_format == 'html':
+            # שמירה בקובץ זמני עבור שיפורי CSS
+            import tempfile
+            temp_file, temp_file_path = tempfile.mkstemp(suffix='.html')
+            with open(temp_file_path, "w", encoding="utf-8") as file:
+                file.write(resume_text)
+            
             # Import the required functions
             from main import EnhancedResumeBuilder
             # Create a temporary instance to access the enhancement methods
@@ -693,7 +689,16 @@ async def generate_resume(request: ResumeGenerationRequest):
             # Set the resume style
             temp_builder.resume_style = resume_style
             # Enhance the HTML file
-            temp_builder._enhance_html_resume(full_path)
+            temp_builder._enhance_html_resume(temp_file_path)
+            
+            # קרא את התוכן המשופר
+            with open(temp_file_path, "r", encoding="utf-8") as file:
+                resume_text = file.read()
+            
+            # מחק את הקובץ הזמני
+            import os
+            os.close(temp_file)
+            os.remove(temp_file_path)
         
         # Generate career tips
         career_tips = [
@@ -701,17 +706,24 @@ async def generate_resume(request: ResumeGenerationRequest):
             f"For {resume_builder_instance.job_role} roles, emphasize your measurable achievements with specific metrics and outcomes.",
             f"As a {resume_builder_instance.resume_level} candidate, focus on showcasing your {'leadership and vision' if resume_builder_instance.resume_level == 'executive' else 'growth and progression' if resume_builder_instance.resume_level == 'mid-level' else 'potential and learning ability'}."
         ]
-
-        # במקום להחזיר נתיב, נחזיר את הקובץ כהורדה
-        return FileResponse(
-            path=full_path,
-            media_type='application/octet-stream',
-            filename=filename
-        )
-    
+        
+        return {
+            "status": "success",
+            "message": "Resume generated successfully",
+            "filename": filename,
+            "resume_content": resume_text,  # החזרת התוכן עצמו
+            "format": resume_format,        # הוספנו גם את הפורמט
+            "career_tips": career_tips
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error generating resume: {str(e)}")
-    
+
+        
+        
+
+
+
+
 @app.post("/api/translate-resume")
 async def translate_resume(request: TranslationRequest):
     """
