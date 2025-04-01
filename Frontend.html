@@ -1,0 +1,2246 @@
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- favicon -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <title>CARA - Career & Resume Assistant</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --info-color: #3498db;
+            --purple-color: #9b59b6;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark-color);
+            background-color: #f9f9f9;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid var(--light-color);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        h2 {
+            color: var(--secondary-color);
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        h3 {
+            color: var(--dark-color);
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        .subtitle {
+            color: #0771b8c1;
+            font-size: 1.2rem;
+            font-weight: 550;
+            opacity: 0.8;
+            letter-spacing: 1px; /* ריווח בין אותיות */
+        }
+
+        .welcome-screen, .interview-screen, .review-screen, .generate-screen, .results-screen {
+            display: none;
+        }
+
+        .active-screen {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.9rem;
+            font-size: 1rem;
+            border: 1px solid rgba(44, 62, 80, 0.1);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+            background-color: rgba(236, 240, 241, 0.3);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+            background-color: white;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        #answer-input {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        #answer-input::placeholder {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background-color: #2b83bd;
+        }
+        /* Only add these new styles for the arrow */
+        .arrow {
+            margin-left: 6px;
+            transition: transform 0.3s ease;
+            display: inline-block;
+            font-size: 18px;
+            font-weight: bold;
+            vertical-align: middle;
+            align-items: center;
+        }
+        
+        #start-interview-btn:hover .arrow {
+            transform: translateX(8px);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #1a252f;
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+        }
+
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+
+        .btn-warning {
+            background-color: var(--warning-color);
+        }
+
+        .btn-warning:hover {
+            background-color: #f39c12;
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .btn-large {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .progress-container {
+            width: 100%;
+            background-color: #f1f1f1;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background-color: var(--primary-color);
+            width: 0;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+
+        .question-container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+        }
+
+        .question-number {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        .question-section {
+            font-size: 1em;
+            color: #888;
+            font-style: italic;
+            opacity: 0.75;
+            margin-left: 5px;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            color: var(--dark-color);
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+            white-space: pre-line;
+        }
+
+        .feedback-container {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--info-color);
+            border-radius: 4px;
+            display: none;
+        }
+
+        .feedback-icon {
+            color: var(--info-color);
+            margin-right: 0.5rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .card-subtitle {
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        .card-body {
+            font-size: 1rem;
+        }
+
+        .review-item {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .review-item:last-child {
+            border-bottom: none;
+        }
+
+        .review-question {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--secondary-color);
+        }
+
+        .review-answer {
+            background-color: #f9f9f9;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+            white-space: pre-line;
+        }
+
+        .review-actions {
+            text-align: right;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25em 0.6em;
+            font-size: 0.8rem;
+            font-weight: 600;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: 10px;
+            color: white;
+            background-color: var(--primary-color);
+            margin-right: 0.5rem;
+        }
+
+        .badge-primary {
+            background-color: var(--primary-color);
+        }
+
+        .badge-secondary {
+            background-color: var(--secondary-color);
+        }
+
+        .badge-success {
+            background-color: var(--success-color);
+        }
+
+        .badge-warning {
+            background-color: var(--warning-color);
+        }
+
+        .badge-danger {
+            background-color: var(--danger-color);
+        }
+
+        .badge-info {
+            background-color: var(--info-color);
+        }
+
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .skill-item {
+            background-color: #f1f8fe;
+            border: 1px solid #c9e2f9;
+            border-radius: 20px;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .skill-item.selected {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .skill-item:hover {
+            background-color: #e1f0fd;
+        }
+
+        .skill-item.selected:hover {
+            background-color: #2980b9;
+        }
+
+        .skill-category {
+            margin-bottom: 1.5rem;
+        }
+
+        .skill-category-title {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+
+        .typing-effect {
+            border-right: 0.15em solid var(--primary-color);
+            white-space: nowrap;
+            overflow: hidden;
+            margin: 0 auto;
+            letter-spacing: 0.15em;
+            animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from {
+                width: 0;
+            }
+            to {
+                width: 100%;
+            }
+        }
+
+        @keyframes blink-caret {
+            from,
+            to {
+                border-color: transparent;
+            }
+            50% {
+                border-color: var(--primary-color);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary-color);
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-container {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .loading-text {
+            margin-top: 1rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .resume-preview {
+            margin-top: 2rem;
+            padding: 2rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            max-height: 500px;
+            overflow-y: auto;
+            background-color: white;
+        }
+
+        .resume-actions {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .tips-container {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: #f4f9fd;
+            border-radius: 8px;
+        }
+
+        .tip-item {
+            display: flex;
+            margin-bottom: 1rem;
+            align-items: flex-start;
+        }
+
+        .tip-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .tip-icon {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            margin-right: 1rem;
+            margin-top: 0.2rem;
+        }
+
+        .tip-content {
+            flex: 1;
+        }
+
+        .tip-title {
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+            color: var(--dark-color);
+        }
+
+        .tip-text {
+            color: #666;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 2rem;
+            border-radius: 8px;
+            max-width: 600px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .modal-header {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-title {
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
+        }
+
+        .modal-body {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-footer {
+            text-align: right;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+
+        .close {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            color: #aaa;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: var(--dark-color);
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            background-color: var(--success-color);
+            color: white;
+            border-radius: 4px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .email-instructions {
+            margin-top: 2rem;
+            background-color: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--info-color);
+        }
+
+        .email-platform {
+            margin-bottom: 1.5rem;
+        }
+
+        .email-platform:last-child {
+            margin-bottom: 0;
+        }
+
+        .email-platform-title {
+            font-weight: 600;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--secondary-color);
+        }
+
+        .email-step {
+            margin-bottom: 0.3rem;
+            display: flex;
+        }
+
+        .email-step-number {
+            font-weight: 600;
+            margin-right: 0.5rem;
+            color: var(--info-color);
+        }
+
+        .language-selector {
+            margin-top: 1.5rem;
+        }
+
+        /* Response to smaller screens */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+                margin-top: 1rem;
+                margin-bottom: 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+
+            .modal-content {
+                margin: 20% auto;
+                padding: 1.5rem;
+            }
+        }
+        .follow-up-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .follow-up-question {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 8px 8px 0 0;
+            width: 500px;
+            max-width: 90%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            color: var(--dark-color);
+            font-weight: 500;
+        }
+
+        .follow-up-input {
+            background-color: white;
+            padding: 1rem;
+            width: 500px;
+            max-width: 90%;
+            min-height: 120px;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 0 0;
+            font-size: 1rem;
+            resize: vertical;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .follow-up-actions {
+            background-color: white;
+            padding: 1rem;
+            border-radius: 0 0 8px 8px;
+            width: 500px;
+            max-width: 90%;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Welcome Screen -->
+        <div id="welcome-screen" class="welcome-screen active-screen">
+            <header>
+                <!-- logo -->
+                <img src="CARAlogo.png" alt="CARA Logo" style="max-width: 200px; height: auto;" />
+
+                <p class="subtitle">Create a professional, tailored resume powered by AI & our database of winning resumes from successful hires in the most high-demand roles!</p>
+            </header>
+            <div class="card">
+                <div class="card-body">
+                    <p>Hi, I'm CARA! I'll help you create a professional, tailored resume that stands out to employers.</p>
+                    <p>Through a series of questions, I'll gather information about your background, skills, and experience. Then I'll use advanced AI to craft a personalized resume specifically for your target role.</p>
+                    <p>Let's get started by learning a bit about you and your career goals.</p>
+                    
+                    <div class="form-group">
+                        <label for="user-name">What's your name?</label>
+                        <input type="text" id="user-name" placeholder="Enter your full name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="job-role">What job role are you targeting with this resume?</label>
+                        <input type="text" id="job-role" placeholder="e.g., Software Developer, Marketing Manager, Data Analyst">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="experience-level">How would you describe your career stage?</label>
+                        <select id="experience-level">
+                            <option value="">Select your career stage</option>
+                            <option value="junior">Entry-level/Junior</option>
+                            <option value="mid-level">Mid-level</option>
+                            <option value="executive">Executive/Senior</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="btn-group">
+                <button id="start-interview-btn" class="btn btn-primary btn-large">
+                    Start Building My Resume <span class="arrow"><i class="fas fa-arrow-right"></i></span>
+                  </button>
+            </div>
+
+        </div>
+
+        <!-- Interview Screen -->
+        <div id="interview-screen" class="interview-screen">
+            <header>
+                <h1>Building Your Resume</h1>
+                <p class="subtitle">Let's gather all the information needed for your professional resume</p>
+            </header>
+            
+            <div class="progress-container">
+                <div id="progress-bar" class="progress-bar"></div>
+            </div>
+            
+            <div id="question-container" class="question-container">
+                <div class="question-number">Question <span id="current-question">1</span> of <span id="total-questions">20</span></div>
+                <h3 class="question-text" id="question-text">What email address would you like to include on your resume?</h3>
+                
+                <div class="form-group">
+                    <textarea id="answer-input" placeholder="Type your answer here..."></textarea>
+                </div>
+                
+                <div id="feedback-container" class="feedback-container">
+                    <i class="fas fa-lightbulb feedback-icon"></i>
+                    <span id="feedback-text">This is where feedback on your answer will appear.</span>
+                </div>
+            </div>
+            
+            <div class="btn-group">
+                <button id="skip-question-btn" class="btn btn-outline">Skip Question</button>
+                <button id="previous-question-btn" class="btn btn-secondary">Previous Question</button>
+                <button id="next-question-btn" class="btn btn-primary">Next Question</button>
+                <button id="finish-interview-btn" class="btn btn-success">Finish & Review</button>
+            </div>
+        </div>
+
+        <!-- Review Screen -->
+        <div id="review-screen" class="review-screen">
+            <header>
+                <h1>Review Your Answers</h1>
+                <p class="subtitle">Let's make sure everything is accurate before we create your resume</p>
+            </header>
+            
+            <div id="review-items-container">
+                <!-- Review items will be added here dynamically -->
+            </div>
+            
+            <div class="btn-group">
+                <button id="back-to-interview-btn" class="btn btn-secondary">Back to Questions</button>
+                <button id="proceed-to-generate-btn" class="btn btn-primary">Create My Resume</button>
+            </div>
+        </div>
+
+        <!-- Generate Screen -->
+        <div id="generate-screen" class="generate-screen">
+            <header>
+                <h1>Create Your Resume</h1>
+                <p class="subtitle">Let's personalize your resume's format and style</p>
+            </header>
+            
+            <div class="card">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="resume-format">What format would you prefer for your resume?</label>
+                        <select id="resume-format">
+                            <option value="html">HTML (more visually appealing)</option>
+                            <option value="text">Text (plain text format)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="resume-style">What style would you prefer?</label>
+                        <select id="resume-style">
+                            <option value="traditional">Traditional (classic and formal)</option>
+                            <option value="modern">Modern (clean and contemporary)</option>
+                            <option value="creative">Creative (distinctive and unique)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Implied Skills Section -->
+            <div id="implied-skills-section" class="card hidden">
+                <div class="card-header">
+                    <h3 class="card-title">Additional Skills Identified</h3>
+                    <p class="card-subtitle">Based on your responses, we've identified these additional skills that seem relevant to your experience.</p>
+                </div>
+                <div class="card-body">
+                    <div id="technical-skills" class="skill-category">
+                        <h4 class="skill-category-title">Technical Skills</h4>
+                        <div class="skills-list" id="technical-skills-list">
+                            <!-- Skills will be added here -->
+                        </div>
+                    </div>
+                    
+                    <div id="soft-skills" class="skill-category">
+                        <h4 class="skill-category-title">Soft Skills</h4>
+                        <div class="skills-list" id="soft-skills-list">
+                            <!-- Skills will be added here -->
+                        </div>
+                    </div>
+                    
+                    <div id="domain-knowledge" class="skill-category">
+                        <h4 class="skill-category-title">Domain Knowledge</h4>
+                        <div class="skills-list" id="domain-knowledge-list">
+                            <!-- Skills will be added here -->
+                        </div>
+                    </div>
+                    
+                    <div id="tools-platforms" class="skill-category">
+                        <h4 class="skill-category-title">Tools & Platforms</h4>
+                        <div class="skills-list" id="tools-platforms-list">
+                            <!-- Skills will be added here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="btn-group">
+                <button id="back-to-review-btn" class="btn btn-secondary">Back to Review</button>
+                <button id="generate-resume-btn" class="btn btn-success">Generate My Resume</button>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="results-screen" class="results-screen">
+            <header>
+                <h1>Your Resume is Ready!</h1>
+                <p class="subtitle">Your personalized resume has been created and saved</p>
+            </header>
+            
+            <div class="loading-container" id="resume-loading">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">Creating your professional resume...</p>
+            </div>
+            
+            <div id="resume-success" class="hidden">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Resume Successfully Created</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>Your personalized resume has been saved to your desktop as: <span id="resume-filename" class="badge badge-info"></span></p>
+                        <p>You can now use this resume for your job applications or make additional edits as needed.</p>
+                    </div>
+                </div>
+                
+                <div id="resume-preview-container" class="resume-preview hidden">
+                    <h3>Resume Preview</h3>
+                    <div id="resume-preview-content"></div>
+                </div>
+                
+                <div class="resume-actions">
+                    <button id="open-resume-btn" class="btn btn-primary">Open Resume in Browser</button>
+                    <button id="translate-resume-btn" class="btn btn-secondary">Translate Resume</button>
+                    <button id="email-resume-btn" class="btn btn-outline">Email Instructions</button>
+                </div>
+                
+                <div class="tips-container">
+                    <h3>Career Tips & Next Steps</h3>
+                    
+                    <div id="career-tips-container">
+                        <!-- Career tips will be added here dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Email Instructions Modal -->
+    <div id="email-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="close-email-modal">&times;</span>
+            <div class="modal-header">
+                <h3 class="modal-title">Email Your Resume</h3>
+            </div>
+            <div class="modal-body">
+                <p>Since I can't send emails directly, here are instructions to email your resume:</p>
+                
+                <div class="email-instructions">
+                    <div class="email-platform">
+                        <h4 class="email-platform-title">Gmail</h4>
+                        <div class="email-step">
+                            <span class="email-step-number">1.</span>
+                            <span>Go to Gmail and click 'Compose'</span>
+                        </div>
+                        <div class="email-step">
+                            <span class="email-step-number">2.</span>
+                            <span>Enter your email address: <span id="user-email"></span></span>
+                        </div>
+                        <div class="email-step">
+                            <span class="email-step-number">3.</span>
+                            <span>Subject: 'My Professional Resume for <span id="email-job-role"></span> Positions'</span>
+                        </div>
+                        <div class="email-step">
+                            <span class="email-step-number">4.</span>
+                            <span>Click the attachment icon and select the file: <span id="email-filename"></span></span>
+                        </div>
+                        <div class="email-step">
+                            <span class="email-step-number">5.</span>
+                            <span>Add a brief message and click 'Send'</span>
+                        </div>
+                    </div>
+                    
+                    <div class="email-platform">
+                        <h4 class="email-platform-title">Outlook</h4>
+                        <div class="email-step">
+                            <span class="email-step-number">1.</span>
+                            <span>Open Outlook and click 'New Email'</span>
+                        </div>
+                        <div class="email-step">
+                            <span class="email-step-number">2.</span>
+                            <span>Enter your email address: <span id="outlook-user-email"></span></span>
+                        </div>
+                        <div class="email-step">
+                            <span class="email-step-number">3.</span>
+                            <span>Subject: 'My Professional Resume for <span id="outlook-job-role"></span> Positions'</span>
+                        </div>
+                        <div class="email-step">
+                            <span class="email-step-number">4.</span>
+                            <span>Click 'Attach File' and select the file: <span id="outlook-filename"></span></span>
+                        </div>
+                        <div class="email-step">
+                            <span class="email-step-number">5.</span>
+                            <span>Add a brief message and click 'Send'</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="close-email-instructions-btn" class="btn btn-primary">Got it</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Translate Resume Modal -->
+    <div id="translate-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="close-translate-modal">&times;</span>
+            <div class="modal-header">
+                <h3 class="modal-title">Translate Your Resume</h3>
+            </div>
+            <div class="modal-body">
+                <p>Would you like to export your resume in another language as well?</p>
+                
+                <div class="language-selector">
+                    <div class="form-group">
+                        <label for="target-language">What language would you like to translate your resume to?</label>
+                        <select id="target-language">
+                            <option value="">Select a language</option>
+                            <option value="Hebrew">Hebrew (עברית) *beta version*</option>
+                            <option value="Spanish">Spanish (Español)</option>
+                            <option value="French">French (Français)</option>
+                            <option value="German">German (Deutsch)</option>
+                            <option value="Italian">Italian (Italiano)</option>
+                            <option value="Portuguese">Portuguese (Português)</option>
+                            <option value="Russian">Russian (Русский)</option>
+                            <option value="Chinese">Chinese (中文)</option>
+                            <option value="Japanese">Japanese (日本語)</option>
+                            <option value="Arabic">Arabic (العربية)</option>
+                            <option value="Hindi">Hindi (हिन्दी)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div id="translation-loading" class="loading-container hidden">
+                    <div class="loading-spinner"></div>
+                    <p class="loading-text">Translating your resume...</p>
+                </div>
+                
+                <div id="translation-success" class="hidden">
+                    <div class="card">
+                        <div class="card-body">
+                            <p>Your resume has been successfully translated to <span id="translated-language"></span>!</p>
+                            <p>The translated resume is saved as: <span id="translated-filename" class="badge badge-info"></span> on your Desktop</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="cancel-translation-btn" class="btn btn-secondary">Cancel</button>
+                <button id="start-translation-btn" class="btn btn-primary">Translate</button>
+                <button id="translation-done-btn" class="btn btn-success hidden">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Answer Modal -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="close-edit-modal">&times;</span>
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Your Answer</h3>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label id="edit-question-label" for="edit-answer-input">Question</label>
+                    <textarea id="edit-answer-input" placeholder="Edit your answer here..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="cancel-edit-btn" class="btn btn-secondary">Cancel</button>
+                <button id="save-edit-btn" class="btn btn-primary">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification">
+        <span id="notification-text">Your changes have been saved.</span>
+    </div>
+
+    <script>
+        // API Configuration
+        const API_BASE_URL = 'http://localhost:8000/api';
+
+        // השלמה אוטומטית לשדה job-role
+        const autocompleteStyle = `
+        .autocomplete-container {
+        position: relative;
+        width: 100%;
+        }
+
+        .autocomplete-suggestions {
+        position: absolute;
+        border: 1px solid #ddd;
+        border-top: none;
+        border-radius: 0 0 4px 4px;
+        z-index: 99;
+        top: 100%;
+        left: 0;
+        right: 0;
+        max-height: 200px;
+        overflow-y: auto;
+        background-color: white;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .autocomplete-suggestion {
+        padding: 10px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .autocomplete-suggestion:hover, .autocomplete-suggestion.selected {
+        background-color: #f1f8fe;
+        color: var(--primary-color);
+        }
+        `;
+
+        // נוסיף את הסגנון לעמוד
+        const styleElement = document.createElement('style');
+        styleElement.textContent = autocompleteStyle;
+        document.head.appendChild(styleElement);
+
+        // רשימת תפקידים מבוססת על הקובץ שצורף
+        const jobRoles = [
+        "Software Developer",
+        "Frontend Developer", 
+        "Backend Developer",
+        "Full Stack Developer",
+        "Software Engineer",
+        "DevOps Engineer",
+        "Product Manager",
+        "Product Owner",
+        "Project Manager",
+        "UX Designer",
+        "UI Designer",
+        "Data Analyst",
+        "Data Scientist",
+        "Marketing Manager",
+        "Sales Manager",
+        "Sales",
+        "Director of Sales",
+        "Team Lead",
+        "Engineering Manager",
+        "Director of Engineering",
+        "Human Resources Manager",
+        "HR Specialist",
+        "Financial Analyst",
+        "Accountant",
+        "Financial Manager",
+        "Operations Manager",
+        "Customer Service Representative",
+        "Customer Success Manager",
+        "Content Writer",
+        "Copywriter",
+        "Consultant",
+        "Cybersecurity Analyst",
+        "Security Engineer",
+        "Attorney",
+        "Lawyer",
+        "Legal Counsel",
+        "Healthcare Manager",
+        "Medical Professional",
+        "Clinical Director",
+        "Research Scientist",
+        "Teacher",
+        "Educator",
+        "Instructor"
+        ];
+
+        // פונקציה המוסיפה השלמה אוטומטית לאלמנט הקלט
+        function setupAutocomplete(inputElement) {
+        // צור מיכל לעטיפת האלמנט והצעות ההשלמה
+        const parentElement = inputElement.parentElement;
+        const wrapper = document.createElement('div');
+        wrapper.className = 'autocomplete-container';
+        
+        // העבר את האלמנט לתוך העטיפה
+        parentElement.insertBefore(wrapper, inputElement);
+        wrapper.appendChild(inputElement);
+        
+        // צור את מיכל ההצעות
+        const suggestionsContainer = document.createElement('div');
+        suggestionsContainer.className = 'autocomplete-suggestions';
+        suggestionsContainer.style.display = 'none';
+        wrapper.appendChild(suggestionsContainer);
+        
+        // מאזין לשינויים בשדה הקלט
+        inputElement.addEventListener('input', function(e) {
+            const value = this.value.toLowerCase();
+            suggestionsContainer.innerHTML = '';
+            
+            if (!value) {
+            suggestionsContainer.style.display = 'none';
+            return;
+            }
+            
+            // סנן את ההצעות הרלוונטיות
+            const filteredSuggestions = jobRoles.filter(job => 
+            job.toLowerCase().includes(value)
+            ).slice(0, 8); // הגבל ל-8 הצעות מקסימום
+            
+            if (filteredSuggestions.length === 0) {
+            suggestionsContainer.style.display = 'none';
+            return;
+            }
+            
+            // יצירת אלמנט עבור כל הצעה
+            filteredSuggestions.forEach(suggestion => {
+            const suggestionElement = document.createElement('div');
+            suggestionElement.className = 'autocomplete-suggestion';
+            suggestionElement.textContent = suggestion;
+            
+            // בעת לחיצה על הצעה - מילוי השדה
+            suggestionElement.addEventListener('click', function() {
+                inputElement.value = suggestion;
+                suggestionsContainer.style.display = 'none';
+            });
+            
+            suggestionsContainer.appendChild(suggestionElement);
+            });
+            
+            suggestionsContainer.style.display = 'block';
+        });
+        
+        // טיפול במקלדת (לבחירה עם חיצים ו-Enter)
+        let selectedIndex = -1;
+        
+        inputElement.addEventListener('keydown', function(e) {
+            const suggestions = suggestionsContainer.querySelectorAll('.autocomplete-suggestion');
+            
+            if (suggestions.length === 0) return;
+            
+            // מקש חץ למטה
+            if (e.key === 'ArrowDown') {
+            selectedIndex = (selectedIndex + 1) % suggestions.length;
+            highlightSuggestion(suggestions, selectedIndex);
+            e.preventDefault();
+            } 
+            // מקש חץ למעלה
+            else if (e.key === 'ArrowUp') {
+            selectedIndex = (selectedIndex - 1 + suggestions.length) % suggestions.length;
+            highlightSuggestion(suggestions, selectedIndex);
+            e.preventDefault();
+            } 
+            // מקש Enter
+            else if (e.key === 'Enter' && selectedIndex > -1) {
+            inputElement.value = suggestions[selectedIndex].textContent;
+            suggestionsContainer.style.display = 'none';
+            e.preventDefault();
+            }
+            // מקש Escape
+            else if (e.key === 'Escape') {
+            suggestionsContainer.style.display = 'none';
+            selectedIndex = -1;
+            }
+        });
+        
+        // הסתרת ההצעות כשלוחצים מחוץ לאזור
+        document.addEventListener('click', function(e) {
+            if (!wrapper.contains(e.target)) {
+            suggestionsContainer.style.display = 'none';
+            selectedIndex = -1;
+            }
+        });
+        
+        // הדגשת ההצעה הנבחרת
+        function highlightSuggestion(suggestions, index) {
+            suggestions.forEach(s => s.classList.remove('selected'));
+            if (index > -1) {
+            suggestions[index].classList.add('selected');
+            suggestions[index].scrollIntoView({ block: 'nearest' });
+            }
+        }
+        }
+
+        // יישום ההשלמה האוטומטית על שדה job-role
+        document.addEventListener('DOMContentLoaded', function() {
+        const jobRoleInput = document.getElementById('job-role');
+        if (jobRoleInput) {
+            setupAutocomplete(jobRoleInput);
+        }
+        });
+
+        // Main application class
+        class ResumeBuilder {
+            constructor() {
+                this.userData = {};
+                this.questions = [];
+                this.currentQuestionIndex = 0;
+                this.resumeLevel = "mid-level"; // Default level
+                this.jobRole = "";
+                this.userName = "";
+                this.impliedSkills = {
+                    technical_skills: [],
+                    soft_skills: [],
+                    domain_knowledge: [],
+                    tools_and_platforms: []
+                };
+                this.confirmedSkills = {
+                    technical_skills: [],
+                    soft_skills: [],
+                    domain_knowledge: [],
+                    tools_and_platforms: []
+                };
+                this.resumeFilename = "";
+                this.translatedFilename = "";
+                
+                this.initEventListeners();
+            }
+            
+            // Initialize all event listeners
+            initEventListeners() {
+                // Welcome screen
+                document.getElementById('start-interview-btn').addEventListener('click', () => this.startInterview());
+                
+                // Interview screen
+                document.getElementById('next-question-btn').addEventListener('click', () => this.nextQuestion());
+                document.getElementById('previous-question-btn').addEventListener('click', () => this.previousQuestion());
+                document.getElementById('skip-question-btn').addEventListener('click', () => this.skipQuestion());
+                document.getElementById('finish-interview-btn').addEventListener('click', () => this.finishInterview());
+                document.getElementById('answer-input').addEventListener('input', () => this.checkAnswerForFollowup());
+                
+                // Review screen
+                document.getElementById('back-to-interview-btn').addEventListener('click', () => this.showScreen('interview-screen'));
+                document.getElementById('proceed-to-generate-btn').addEventListener('click', () => this.proceedToGenerate());
+                
+                // Generate screen
+                document.getElementById('back-to-review-btn').addEventListener('click', () => this.showScreen('review-screen'));
+                document.getElementById('generate-resume-btn').addEventListener('click', () => this.generateResume());
+                
+                // Results screen
+                document.getElementById('open-resume-btn').addEventListener('click', () => this.openResumeInBrowser());
+                document.getElementById('translate-resume-btn').addEventListener('click', () => this.openTranslateModal());
+                document.getElementById('email-resume-btn').addEventListener('click', () => this.openEmailModal());
+                
+                // Email modal
+                document.getElementById('close-email-modal').addEventListener('click', () => this.closeEmailModal());
+                document.getElementById('close-email-instructions-btn').addEventListener('click', () => this.closeEmailModal());
+                
+                // Translate modal
+                document.getElementById('close-translate-modal').addEventListener('click', () => this.closeTranslateModal());
+                document.getElementById('cancel-translation-btn').addEventListener('click', () => this.closeTranslateModal());
+                document.getElementById('start-translation-btn').addEventListener('click', () => this.translateResume());
+                document.getElementById('translation-done-btn').addEventListener('click', () => this.closeTranslateModal());
+                
+                // Edit modal
+                document.getElementById('close-edit-modal').addEventListener('click', () => this.closeEditModal());
+                document.getElementById('cancel-edit-btn').addEventListener('click', () => this.closeEditModal());
+                document.getElementById('save-edit-btn').addEventListener('click', () => this.saveEditedAnswer());
+            }
+            
+            // API Methods
+            async apiRequest(endpoint, method = 'GET', data = null) {
+                try {
+                    const url = `${API_BASE_URL}/${endpoint}`;
+                    const options = {
+                        method: method,
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    };
+                    
+                    if (data && (method === 'POST' || method === 'PUT')) {
+                        options.body = JSON.stringify(data);
+                    }
+                    
+                    const response = await fetch(url, options);
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.detail || 'API request failed');
+                    }
+                    
+                    return await response.json();
+                } catch (error) {
+                    console.error('API Request Error:', error);
+                    this.showNotification(error.message || 'Failed to connect to the server. Please try again.', 'error');
+                    throw error;
+                }
+            }
+            
+            // Start the interview process
+            async startInterview() {
+                // Get user information
+                this.userName = document.getElementById('user-name').value.trim();
+                this.jobRole = document.getElementById('job-role').value.trim();
+                this.resumeLevel = document.getElementById('experience-level').value;
+                
+                // Validate inputs
+                if (!this.userName || !this.jobRole || !this.resumeLevel) {
+                    this.showNotification('Please fill in all the fields', 'error');
+                    return;
+                }
+                
+                try {
+                    // Initialize session on the backend
+                    const initResponse = await this.apiRequest('initialize', 'POST', {
+                        full_name: this.userName,
+                        job_role: this.jobRole,
+                        resume_level: this.resumeLevel
+                    });
+                    
+                    // Save basic info to userData
+                    this.userData['full_name'] = this.userName;
+                    
+                    // Get questions from the backend
+                    const questionsResponse = await this.apiRequest('questions');
+                    this.questions = questionsResponse.questions;
+                    
+                    // Show interview screen
+                    this.showScreen('interview-screen');
+                    
+                    // Update UI with first question
+                    this.updateQuestionUI();
+                } catch (error) {
+                    // Error is already handled in apiRequest
+                    console.error('Failed to start interview:', error);
+                }
+            }
+            
+            // Update the question UI
+            async updateQuestionUI() {
+                try {
+                    // Get the current question details from the API
+                    const questionResponse = await this.apiRequest(`question/${this.currentQuestionIndex}`);
+                    
+                    // Update question number and text
+                    document.getElementById('current-question').textContent = this.currentQuestionIndex + 1;
+                    document.getElementById('total-questions').textContent = this.questions.length;
+                    
+                    // Add section name next to question number (in a subtle way)
+                    const questionNumberElement = document.querySelector('.question-number');
+                    // Check if section span already exists and remove it if it does
+                    const existingSection = questionNumberElement.querySelector('.question-section');
+                    if (existingSection) {
+                        existingSection.remove();
+                    }
+                    
+                    // Create and add the section element
+                    const sectionElement = document.createElement('span');
+                    sectionElement.textContent = ` - ${questionResponse.section}`;
+                    sectionElement.className = 'question-section';
+                    questionNumberElement.appendChild(sectionElement);
+                    
+                    document.getElementById('question-text').textContent = questionResponse.question;
+                    
+                    // Get textarea and set its value
+                    const answerInput = document.getElementById('answer-input');
+                    answerInput.value = questionResponse.current_answer || '';
+                    
+                    // Focus on the textarea
+                    answerInput.focus();
+                    
+                    // Hide feedback initially
+                    document.getElementById('feedback-container').style.display = 'none';
+                    
+                    // Update progress bar
+                    const progressPercentage = ((this.currentQuestionIndex + 1) / this.questions.length) * 100;
+                    document.getElementById('progress-bar').style.width = `${progressPercentage}%`;
+                    
+                    // Update button visibility
+                    document.getElementById('previous-question-btn').style.display = 
+                        this.currentQuestionIndex > 0 ? 'inline-block' : 'none';
+                    
+                    document.getElementById('finish-interview-btn').style.display = 
+                        this.currentQuestionIndex >= Math.floor(this.questions.length * 0.75) ? 'inline-block' : 'none';
+                } catch (error) {
+                    console.error('Failed to update question UI:', error);
+                }
+            }
+            
+            // Navigate to the next question
+            async nextQuestion() {
+                // Save current answer
+                const currentQuestion = this.questions[this.currentQuestionIndex];
+                const answer = document.getElementById('answer-input').value.trim();
+                
+                try {
+                    // Send answer to the backend
+                    const saveResponse = await this.apiRequest(`answer/${this.currentQuestionIndex}`, 'POST', {
+                        key: currentQuestion.key,
+                        answer: answer
+                    });
+                    
+                    // Save locally as well
+                    this.userData[currentQuestion.key] = answer;
+                    
+                    // Check for feedback
+                    if (saveResponse.feedback) {
+                        const feedbackContainer = document.getElementById('feedback-container');
+                        feedbackContainer.style.display = 'block';
+                        document.getElementById('feedback-text').textContent = saveResponse.feedback.message;
+                    }
+                    
+                    // Check for follow-up question
+                    if (saveResponse.followup) {
+                        // Show follow-up question in a modal or directly in the UI
+                        this.showFollowUpQuestion(saveResponse.followup, currentQuestion.key);
+                        return; // Don't proceed to next question until follow-up is answered
+                    }
+                    
+                    // Normal flow - proceed to next question
+                    // Check if we're at the end
+                    if (this.currentQuestionIndex >= this.questions.length - 1) {
+                        this.finishInterview();
+                        return;
+                    }
+                    
+                    // Move to next question
+                    this.currentQuestionIndex++;
+                    this.updateQuestionUI();
+                } catch (error) {
+                    if (error.message.includes('Invalid email format')) {
+                        this.showNotification('Please enter a valid email address', 'error');
+                    } else {
+                        console.error('Failed to save answer:', error);
+                    }
+                }
+            }
+
+            // Handle follow-up questions
+            showFollowUpQuestion(followup, originalKey) {
+                // Create modal or inline display for follow-up
+                const followupModal = document.createElement('div');
+                followupModal.className = 'follow-up-container';
+                
+                const followupQuestion = document.createElement('div');
+                followupQuestion.className = 'follow-up-question';
+                followupQuestion.textContent = followup.message;
+                
+                const followupInput = document.createElement('textarea');
+                followupInput.className = 'follow-up-input';
+                followupInput.placeholder = 'Type your answer here...';
+                
+                const followupActions = document.createElement('div');
+                followupActions.className = 'follow-up-actions';
+                
+                const skipBtn = document.createElement('button');
+                skipBtn.className = 'btn btn-outline';
+                skipBtn.textContent = 'Skip';
+                skipBtn.addEventListener('click', () => {
+                    document.body.removeChild(followupModal);
+                    this.proceedAfterFollowUp();
+                });
+                
+                const submitBtn = document.createElement('button');
+                submitBtn.className = 'btn btn-primary';
+                submitBtn.textContent = 'Submit';
+                submitBtn.addEventListener('click', async () => {
+                    const followupAnswer = followupInput.value.trim();
+                    if (followupAnswer) {
+                        try {
+                            // Send follow-up answer based on type
+                            await this.apiRequest(`follow-up/${followup.type}`, 'POST', {
+                                answer: followupAnswer,
+                                original_key: originalKey,
+                                next_question: followup.additional_questions ? followup.additional_questions[0] : null
+                            });
+                            
+                            this.showNotification('Additional information saved', 'success');
+                        } catch (error) {
+                            console.error('Failed to save follow-up:', error);
+                        }
+                    }
+                    
+                    document.body.removeChild(followupModal);
+                    this.proceedAfterFollowUp();
+                });
+                
+                followupActions.appendChild(skipBtn);
+                followupActions.appendChild(submitBtn);
+                
+                followupModal.appendChild(followupQuestion);
+                followupModal.appendChild(followupInput);
+                followupModal.appendChild(followupActions);
+                
+                document.body.appendChild(followupModal);
+            }
+
+            // Continue after follow-up is handled
+            proceedAfterFollowUp() {
+                // Check if we're at the end
+                if (this.currentQuestionIndex >= this.questions.length - 1) {
+                    this.finishInterview();
+                    return;
+                }
+                
+                // Move to next question
+                this.currentQuestionIndex++;
+                this.updateQuestionUI();
+            }
+
+            // Navigate to the previous question
+            previousQuestion() {
+                if (this.currentQuestionIndex > 0) {
+                    this.currentQuestionIndex--;
+                    this.updateQuestionUI();
+                }
+            }
+            
+            // Skip the current question
+            skipQuestion() {
+                // Check if we're at the end
+                if (this.currentQuestionIndex >= this.questions.length - 1) {
+                    this.finishInterview();
+                    return;
+                }
+                
+                // Move to next question
+                this.currentQuestionIndex++;
+                this.updateQuestionUI();
+                
+                // Show notification
+                this.showNotification('Question skipped. You can come back to it later.', 'info');
+            }
+            
+            // Finish the interview and go to review screen
+            async finishInterview() {
+                // Save current answer if any
+                const currentQuestion = this.questions[this.currentQuestionIndex];
+                const answer = document.getElementById('answer-input').value.trim();
+                
+                if (answer) {
+                    try {
+                        // Send answer to the backend
+                        await this.apiRequest(`answer/${this.currentQuestionIndex}`, 'POST', {
+                            key: currentQuestion.key,
+                            answer: answer
+                        });
+                        
+                        // Save locally as well
+                        this.userData[currentQuestion.key] = answer;
+                    } catch (error) {
+                        console.error('Failed to save final answer:', error);
+                    }
+                }
+                
+                try {
+                    // Get all answers from the backend to ensure we have the latest data
+                    const answersResponse = await this.apiRequest('answers');
+                    this.userData = answersResponse.answers;
+                    
+                    // Generate review items
+                    this.populateReviewScreen();
+                    
+                    // Show review screen
+                    this.showScreen('review-screen');
+                } catch (error) {
+                    console.error('Failed to get answers for review:', error);
+                }
+            }
+            
+            // Populate the review screen with user's answers
+            populateReviewScreen() {
+                const reviewContainer = document.getElementById('review-items-container');
+                reviewContainer.innerHTML = '';
+                
+                // Group questions by section
+                const sectionMap = {};
+                
+                this.questions.forEach(question => {
+                    if (!sectionMap[question.section]) {
+                        sectionMap[question.section] = [];
+                    }
+                    sectionMap[question.section].push(question);
+                });
+                
+                // Create review items by section
+                for (const section in sectionMap) {
+                    const sectionHeader = document.createElement('h3');
+                    sectionHeader.textContent = section;
+                    reviewContainer.appendChild(sectionHeader);
+                    
+                    sectionMap[section].forEach(question => {
+                        const answer = this.userData[question.key] || '';
+                        
+                        if (answer || section === 'Personal') { // Always show personal info items
+                            const reviewItem = document.createElement('div');
+                            reviewItem.className = 'review-item';
+                            
+                            const reviewQuestion = document.createElement('div');
+                            reviewQuestion.className = 'review-question';
+                            reviewQuestion.textContent = question.question.split('\n')[0]; // Just the first line of question
+                            
+                            const reviewAnswer = document.createElement('div');
+                            reviewAnswer.className = 'review-answer';
+                            reviewAnswer.textContent = answer || 'Not provided';
+                            
+                            const reviewActions = document.createElement('div');
+                            reviewActions.className = 'review-actions';
+                            
+                            const editBtn = document.createElement('button');
+                            editBtn.className = 'btn btn-small btn-outline';
+                            editBtn.textContent = 'Edit';
+                            editBtn.addEventListener('click', () => this.openEditModal(question, answer));
+                            
+                            reviewActions.appendChild(editBtn);
+                            reviewItem.appendChild(reviewQuestion);
+                            reviewItem.appendChild(reviewAnswer);
+                            reviewItem.appendChild(reviewActions);
+                            
+                            reviewContainer.appendChild(reviewItem);
+                        }
+                    });
+                }
+            }
+            
+            // Proceed to generate screen
+            async proceedToGenerate() {
+                try {
+                    // Analyze implied skills via the backend
+                    const skillsResponse = await this.apiRequest('analyze-skills', 'POST');
+                    
+                    if (skillsResponse.implied_skills) {
+                        this.impliedSkills = skillsResponse.implied_skills;
+                        
+                        // Populate the implied skills section
+                        this.populateImpliedSkills();
+                        document.getElementById('implied-skills-section').classList.remove('hidden');
+                    } else {
+                        document.getElementById('implied-skills-section').classList.add('hidden');
+                    }
+                    
+                    // Show generate screen
+                    this.showScreen('generate-screen');
+                } catch (error) {
+                    console.error('Failed to analyze skills:', error);
+                    // Still proceed to generate screen even if skills analysis fails
+                    this.showScreen('generate-screen');
+                }
+            }
+            
+            // Populate the implied skills section UI
+            populateImpliedSkills() {
+                const categories = {
+                    'technical-skills-list': this.impliedSkills.technical_skills,
+                    'soft-skills-list': this.impliedSkills.soft_skills,
+                    'domain-knowledge-list': this.impliedSkills.domain_knowledge,
+                    'tools-platforms-list': this.impliedSkills.tools_and_platforms
+                };
+                
+                // Clear existing skills
+                for (const listId in categories) {
+                    const list = document.getElementById(listId);
+                    list.innerHTML = '';
+                    
+                    // Hide empty categories
+                    const category = list.closest('.skill-category');
+                    if (categories[listId].length === 0) {
+                        category.style.display = 'none';
+                    } else {
+                        category.style.display = 'block';
+                    }
+                    
+                    // Add each skill as a clickable item
+                    categories[listId].forEach(skill => {
+                        const skillItem = document.createElement('div');
+                        skillItem.className = 'skill-item';
+                        skillItem.textContent = skill;
+                        skillItem.dataset.skill = skill;
+                        skillItem.dataset.category = listId.replace('-list', '');
+                        
+                        // Make skills selectable
+                        skillItem.addEventListener('click', () => {
+                            skillItem.classList.toggle('selected');
+                            this.updateConfirmedSkills();
+                        });
+                        
+                        list.appendChild(skillItem);
+                    });
+                }
+            }
+            
+            // Update the list of confirmed skills based on selection
+            updateConfirmedSkills() {
+                // Reset confirmed skills
+                this.confirmedSkills = {
+                    technical_skills: [],
+                    soft_skills: [],
+                    domain_knowledge: [],
+                    tools_and_platforms: []
+                };
+                
+                // Get all selected skills
+                const selectedSkills = document.querySelectorAll('.skill-item.selected');
+                selectedSkills.forEach(item => {
+                    const category = item.dataset.category;
+                    const skill = item.dataset.skill;
+                    
+                    switch(category) {
+                        case 'technical-skills':
+                            this.confirmedSkills.technical_skills.push(skill);
+                            break;
+                        case 'soft-skills':
+                            this.confirmedSkills.soft_skills.push(skill);
+                            break;
+                        case 'domain-knowledge':
+                            this.confirmedSkills.domain_knowledge.push(skill);
+                            break;
+                        case 'tools-platforms':
+                            this.confirmedSkills.tools_and_platforms.push(skill);
+                            break;
+                    }
+                });
+            }
+            
+            // Generate the resume
+            async generateResume() {
+                // Get resume format and style
+                const resumeFormat = document.getElementById('resume-format').value;
+                const resumeStyle = document.getElementById('resume-style').value;
+                
+                // Update confirmed skills
+                this.updateConfirmedSkills();
+                
+                // Show loading screen
+                this.showScreen('results-screen');
+                document.getElementById('resume-loading').classList.remove('hidden');
+                document.getElementById('resume-success').classList.add('hidden');
+                
+                try {
+                    // Call the API to generate the resume
+                    const generateResponse = await this.apiRequest('generate-resume', 'POST', {
+                        format: resumeFormat,
+                        style: resumeStyle,
+                        confirmed_skills: this.confirmedSkills
+                    });
+                    
+                    // Save the filename for later use
+                    this.resumeFilename = generateResponse.filename;
+                    
+                    // Update UI
+                    document.getElementById('resume-loading').classList.add('hidden');
+                    document.getElementById('resume-success').classList.remove('hidden');
+                    document.getElementById('resume-filename').textContent = this.resumeFilename;
+                    
+                    // Add career tips if provided
+                    if (generateResponse.career_tips) {
+                        this.displayCareerTips(generateResponse.career_tips);
+                    }
+                    
+                } catch (error) {
+                    console.error('Failed to generate resume:', error);
+                    this.showNotification('Failed to generate resume. Please try again.', 'error');
+                    
+                    // Show a basic success view anyway for demo purposes
+                    document.getElementById('resume-loading').classList.add('hidden');
+                    document.getElementById('resume-success').classList.remove('hidden');
+                    document.getElementById('resume-filename').textContent = `${this.userName.replace(' ', '_').toLowerCase()}_resume.${resumeFormat}`;
+                }
+            }
+            
+            // Display career tips
+            displayCareerTips(tips) {
+                const tipsContainer = document.getElementById('career-tips-container');
+                tipsContainer.innerHTML = '';
+                
+                const tipIcons = ['fa-comment', 'fa-lightbulb', 'fa-chart-line', 'fa-search'];
+                
+                tips.forEach((tip, index) => {
+                    const tipItem = document.createElement('div');
+                    tipItem.className = 'tip-item';
+                    
+                    const icon = tipIcons[index % tipIcons.length];
+                    
+                    tipItem.innerHTML = `
+                        <div class="tip-icon">
+                            <i class="fas ${icon}"></i>
+                        </div>
+                        <div class="tip-content">
+                            <div class="tip-text">${tip}</div>
+                        </div>
+                    `;
+                    
+                    tipsContainer.appendChild(tipItem);
+                });
+            }
+            
+            // Open resume in browser
+            openResumeInBrowser() {
+                // This would depend on the specific implementation of your backend
+                // For now, just show a notification
+                this.showNotification('Opening resume in browser...', 'info');
+                
+                // In a real implementation, you might do something like:
+                // window.open('/open-resume?filename=' + encodeURIComponent(this.resumeFilename), '_blank');
+            }
+            
+            // Open the translate modal
+            openTranslateModal() {
+                document.getElementById('translate-modal').style.display = 'block';
+                document.getElementById('translation-loading').classList.add('hidden');
+                document.getElementById('translation-success').classList.add('hidden');
+                document.getElementById('start-translation-btn').classList.remove('hidden');
+                document.getElementById('translation-done-btn').classList.add('hidden');
+            }
+            
+            // Close the translate modal
+            closeTranslateModal() {
+                document.getElementById('translate-modal').style.display = 'none';
+            }
+            
+            // Translate the resume
+            async translateResume() {
+                const targetLanguage = document.getElementById('target-language').value;
+                
+                if (!targetLanguage) {
+                    this.showNotification('Please select a language for translation', 'error');
+                    return;
+                }
+                
+                // Show loading
+                document.getElementById('translation-loading').classList.remove('hidden');
+                document.getElementById('start-translation-btn').classList.add('hidden');
+                
+                try {
+                    // Call API to translate
+                    const translateResponse = await this.apiRequest('translate-resume', 'POST', {
+                        filename: this.resumeFilename,
+                        target_language: targetLanguage
+                    });
+                    
+                    // Update UI with success
+                    document.getElementById('translation-loading').classList.add('hidden');
+                    document.getElementById('translation-success').classList.remove('hidden');
+                    document.getElementById('translation-done-btn').classList.remove('hidden');
+                    
+                    // Set translated info
+                    this.translatedFilename = translateResponse.translated_filename;
+                    document.getElementById('translated-language').textContent = targetLanguage;
+                    document.getElementById('translated-filename').textContent = this.translatedFilename;
+                } catch (error) {
+                    console.error('Failed to translate resume:', error);
+                    this.showNotification('Failed to translate resume. Please try again.', 'error');
+                    
+                    // Hide loading and show the start button again
+                    document.getElementById('translation-loading').classList.add('hidden');
+                    document.getElementById('start-translation-btn').classList.remove('hidden');
+                }
+            }
+            
+            // Open the email modal
+            openEmailModal() {
+                document.getElementById('email-modal').style.display = 'block';
+                
+                // Fill in user email if available
+                const userEmail = this.userData.email || '';
+                document.getElementById('user-email').textContent = userEmail;
+                document.getElementById('outlook-user-email').textContent = userEmail;
+                
+                // Fill in job role
+                document.getElementById('email-job-role').textContent = this.jobRole;
+                document.getElementById('outlook-job-role').textContent = this.jobRole;
+                
+                // Fill in filename
+                document.getElementById('email-filename').textContent = this.resumeFilename;
+                document.getElementById('outlook-filename').textContent = this.resumeFilename;
+            }
+            
+            // Close the email modal
+            closeEmailModal() {
+                document.getElementById('email-modal').style.display = 'none';
+            }
+            
+            // Open edit modal
+            openEditModal(question, answer) {
+                document.getElementById('edit-modal').style.display = 'block';
+                document.getElementById('edit-question-label').textContent = question.question.split('\n')[0];
+                document.getElementById('edit-answer-input').value = answer;
+                
+                // Store the question key for saving
+                document.getElementById('edit-answer-input').dataset.questionKey = question.key;
+                document.getElementById('edit-answer-input').dataset.questionIndex = this.findQuestionIndex(question.key);
+            }
+            
+            // Find the question index by key
+            findQuestionIndex(key) {
+                return this.questions.findIndex(q => q.key === key);
+            }
+            
+            // Close edit modal
+            closeEditModal() {
+                document.getElementById('edit-modal').style.display = 'none';
+            }
+            
+            // Save edited answer
+            async saveEditedAnswer() {
+                const input = document.getElementById('edit-answer-input');
+                const questionKey = input.dataset.questionKey;
+                const questionIndex = input.dataset.questionIndex;
+                const newAnswer = input.value.trim();
+                
+                try {
+                    // Send updated answer to the backend
+                    await this.apiRequest(`answer/${questionIndex}`, 'POST', {
+                        key: questionKey,
+                        answer: newAnswer
+                    });
+                    
+                    // Update user data locally
+                    this.userData[questionKey] = newAnswer;
+                    
+                    // Close modal
+                    this.closeEditModal();
+                    
+                    // Update review screen
+                    this.populateReviewScreen();
+                    
+                    // Show notification
+                    this.showNotification('Your answer has been updated', 'success');
+                } catch (error) {
+                    if (error.message.includes('Invalid email format')) {
+                        this.showNotification('Please enter a valid email address', 'error');
+                    } else {
+                        console.error('Failed to save edited answer:', error);
+                        this.showNotification('Failed to save your changes. Please try again.', 'error');
+                    }
+                }
+            }
+            
+            // Check for follow-up questions based on answer
+            checkAnswerForFollowup() {
+                // This would be more sophisticated when connected to your backend
+                // For now, we'll implement a simplified version
+                const currentQuestion = this.questions[this.currentQuestionIndex];
+                const answer = document.getElementById('answer-input').value.trim();
+                
+                if (currentQuestion.key === 'job_history' && answer.length > 50) {
+                    // Simple check if the answer mentions dates
+                    if (!answer.match(/\b(19|20)\d{2}\b/) && !answer.match(/\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\b/i)) {
+                        // Show feedback about missing dates
+                        const feedbackContainer = document.getElementById('feedback-container');
+                        feedbackContainer.style.display = 'block';
+                        document.getElementById('feedback-text').textContent = 
+                            "Tip: Consider including specific dates for each position to strengthen your work history.";
+                    } else {
+                        // Hide feedback if dates are found
+                        document.getElementById('feedback-container').style.display = 'none';
+                    }
+                }
+            }
+            
+            // Switch between screens
+            showScreen(screenId) {
+                // Hide all screens
+                document.querySelectorAll('.welcome-screen, .interview-screen, .review-screen, .generate-screen, .results-screen').forEach(screen => {
+                    screen.classList.remove('active-screen');
+                });
+                
+                // Show selected screen
+                document.getElementById(screenId).classList.add('active-screen');
+                
+                // Scroll to top
+                window.scrollTo(0, 0);
+            }
+            
+            // Show notification
+            showNotification(message, type = 'success') {
+                const notification = document.getElementById('notification');
+                document.getElementById('notification-text').textContent = message;
+                
+                // Set notification color based on type
+                if (type === 'error') {
+                    notification.style.backgroundColor = '#e74c3c';
+                } else if (type === 'info') {
+                    notification.style.backgroundColor = '#3498db';
+                } else {
+                    notification.style.backgroundColor = '#2ecc71';
+                }
+                
+                // Show notification
+                notification.classList.add('show');
+                
+                // Hide after 3 seconds
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+        }
+        
+        // Initialize the application when the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            const resumeBuilder = new ResumeBuilder();
+        });
+
+        // קוד לולידציה של שדות הטופס
+        function setupFieldValidation() {
+            // השדות שצריכים ולידציה
+            const fieldsToValidate = [
+                {
+                    id: 'user-name',
+                    validator: (value) => {
+                        // בדיקה שהשם מכיל רק אותיות, רווחים, גרש וגרשיים, מקפים ונקודות (ללא מספרים וסימנים מיוחדים אחרים)
+                        return /^[a-zA-Zא-ת\s.'"-]+$/.test(value);
+                    }
+                },
+                {
+                    id: 'job-role',
+                    validator: (value) => {
+                        // בדיקה שהתפקיד מכיל רק אותיות, רווחים, מספרים, מקפים ופסיקים
+                        return /^[a-zA-Zא-ת0-9\s,.&()-]+$/.test(value);
+                    }
+                }
+            ];
+
+            // מעבר על כל השדות והוספת אירועי ולידציה
+            fieldsToValidate.forEach(field => {
+                const inputElement = document.getElementById(field.id);
+                if (!inputElement) return;
+
+                // יצירת אלמנט סימון (ישאר בלתי נראה בהתחלה)
+                const indicatorElement = document.createElement('span');
+                indicatorElement.className = 'validation-indicator';
+                indicatorElement.style.position = 'absolute';
+                indicatorElement.style.right = '10px';
+                indicatorElement.style.top = '50%';
+                indicatorElement.style.transform = 'translateY(-50%)';
+                indicatorElement.style.display = 'none';
+                
+                // יצירת מיכל יחסי לאינדיקטור
+                const containerDiv = document.createElement('div');
+                containerDiv.style.position = 'relative';
+                containerDiv.style.display = 'block';
+                
+                // העברת ה-input למיכל החדש
+                inputElement.parentNode.insertBefore(containerDiv, inputElement);
+                containerDiv.appendChild(inputElement);
+                
+                // הוספת האינדיקטור למיכל
+                containerDiv.appendChild(indicatorElement);
+
+                // הוספת אירוע בדיקה כשהמשתמש יוצא מהשדה
+                inputElement.addEventListener('blur', function() {
+                    const value = this.value.trim();
+                    
+                    // אם השדה ריק, הסתר את האינדיקטור
+                    if (value === '') {
+                        indicatorElement.style.display = 'none';
+                        inputElement.style.borderColor = ''; // מחזיר לסגנון ברירת המחדל
+                        return;
+                    }
+
+                    // הפעלת הולידציה והצגת האינדיקטור המתאים
+                    const isValid = field.validator(value);
+                    
+                    if (isValid) {
+                        // סימון וי ירוק
+                        indicatorElement.innerHTML = '<i class="fas fa-check" style="color: #2ecc71;"></i>';
+                        inputElement.style.borderColor = ''; // ללא מסגרת ירוקה
+                    } else {
+                        // סימון איקס אדום
+                        indicatorElement.innerHTML = '<i class="fas fa-times" style="color: #e74c3c;"></i>';
+                        inputElement.style.borderColor = '#e74c3c';
+                    }
+                    
+                    indicatorElement.style.display = 'inline';
+                });
+
+                // תיקון המראה כאשר המשתמש מתחיל להקליד שוב
+                inputElement.addEventListener('focus', function() {
+                    inputElement.style.borderColor = 'var(--primary-color)';
+                });
+            });
+        }
+
+        // להפעיל את הולידציה לאחר טעינת העמוד
+        document.addEventListener('DOMContentLoaded', function() {
+            setupFieldValidation();
+        });
+              
+    </script>
+</body>
