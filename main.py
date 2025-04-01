@@ -2714,13 +2714,14 @@ class EnhancedResumeBuilder:
             Original question: "{original_question if original_question else 'Not provided'}"
             User's answer: "{text}"
             """
-            
-            # Section-specific prompts
+
+                # Section-specific prompts
             if question_section == "Personal":
                 analysis_prompt = base_prompt + f"""
                 For personal information questions, check if:
-                1. All requested contact details are provided
-                2. The format is appropriate for a resume (especially for email, phone)
+                1. The answer is relevant to the question.
+                2. All requested information (ACCORDING TO THE QUESTION) is provided 
+
                 
                 Generate specific followup question (Short and concise) only if essential information is missing or needs clarification.
                 """
