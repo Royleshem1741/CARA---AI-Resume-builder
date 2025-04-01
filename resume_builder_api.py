@@ -672,9 +672,9 @@ async def generate_resume(request: ResumeGenerationRequest):
         # Get the resume text
         resume_text = response.choices[0].message.content
         
-        # Get desktop path
-        desktop_path = os.path.expanduser("~/Desktop")
-        full_path = os.path.join(desktop_path, filename)
+        #   שמירה בדסקטופ ישירות לא עובד = שמירת הקובץ בתיקייה זמנית (/tmp)
+        temp_dir = tempfile.gettempdir()
+        full_path = os.path.join(temp_dir, filename)
         
         # Save the resume
         with open(full_path, "w", encoding="utf-8") as file:
@@ -701,14 +701,14 @@ async def generate_resume(request: ResumeGenerationRequest):
             f"For {resume_builder_instance.job_role} roles, emphasize your measurable achievements with specific metrics and outcomes.",
             f"As a {resume_builder_instance.resume_level} candidate, focus on showcasing your {'leadership and vision' if resume_builder_instance.resume_level == 'executive' else 'growth and progression' if resume_builder_instance.resume_level == 'mid-level' else 'potential and learning ability'}."
         ]
-        
-        return {
-            "status": "success",
-            "message": "Resume generated successfully",
-            "filename": filename,
-            "path": full_path,
-            "career_tips": career_tips
-        }
+
+        # במקום להחזיר נתיב, נחזיר את הקובץ כהורדה
+        return FileResponse(
+            path=full_path,
+            media_type='application/octet-stream',
+            filename=filename
+        )
+    
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error generating resume: {str(e)}")
     
