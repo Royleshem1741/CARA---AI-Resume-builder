@@ -1879,6 +1879,7 @@
             }
             
             // Generate the resume
+            // עדכון הפונקציה generateResume()
             async generateResume() {
                 // Get resume format and style
                 const resumeFormat = document.getElementById('resume-format').value;
@@ -1900,10 +1901,8 @@
                         confirmed_skills: this.confirmedSkills
                     });
                     
-                    // Save the filename and content for later use
+                    // Save the filename for later use
                     this.resumeFilename = generateResponse.filename;
-                    this.resumeContent = generateResponse.resume_content; // Store the content from server
-                    
                     
                     // Update UI
                     document.getElementById('resume-loading').classList.add('hidden');
@@ -1913,6 +1912,26 @@
                     // Add career tips if provided
                     if (generateResponse.career_tips) {
                         this.displayCareerTips(generateResponse.career_tips);
+                    }
+                    
+                    // הורדה אוטומטית של הקובץ אם יש לנו URL להורדה
+                    if (generateResponse.download_url) {
+                        // מחכים רגע קט כדי לתת לממשק להתעדכן לפני ההורדה
+                        setTimeout(() => {
+                            // יצירת אלמנט קישור סמוי להורדה
+                            const downloadLink = document.createElement('a');
+                            downloadLink.href = `${API_BASE_URL}${generateResponse.download_url}`;
+                            downloadLink.style.display = 'none';
+                            downloadLink.setAttribute('download', this.resumeFilename);
+                            
+                            // הוספה לעמוד, לחיצה והסרה
+                            document.body.appendChild(downloadLink);
+                            downloadLink.click();
+                            document.body.removeChild(downloadLink);
+                            
+                            // הצגת הודעה למשתמש
+                            this.showNotification('Resume download started automatically', 'success');
+                        }, 1000);
                     }
                     
                 } catch (error) {
@@ -1925,6 +1944,7 @@
                     document.getElementById('resume-filename').textContent = `${this.userName.replace(' ', '_').toLowerCase()}_resume.${resumeFormat}`;
                 }
             }
+            
             
             // Display career tips
             displayCareerTips(tips) {
