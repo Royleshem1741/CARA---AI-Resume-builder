@@ -7,13 +7,14 @@ import subprocess
 import json
 import time
 from main import EnhancedResumeBuilder  # Import existing EnhancedResumeBuilder class
+
 #טיפול בהורדת קבצים בצד לקוח (בדפדפן)
 from fastapi.responses import FileResponse
 import io
 import tempfile
 
 
-app = FastAPI(title="Resume Builder API", description="API for the Interactive Resume Builder")
+app = FastAPI(title="CARA Resume Builder API", description="API for the CARA Resume Builder")
 
 # Configure CORS to allow frontend requests
 app.add_middleware(
@@ -125,7 +126,7 @@ async def location_followup(data: dict):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing follow-up: {str(e)}")
 
-@app.post("/api/follow-up/job-details")
+@app.post("/api/follow-up/job_details")
 async def job_details_followup(data: dict):
     """
     Handle follow-up response for missing job details
@@ -648,6 +649,7 @@ async def generate_resume(request: ResumeGenerationRequest):
             4. Do not include placeholder text or section headings for missing information.
             5. Ensure the HTML structure remains valid and properly nested after removing empty sections.
             6. Replace [RESUME_STYLE] with the actual style name: "{resume_style}".
+            7. Output only the HTML code exactly as per the template provided. Do not include any additional commentary, explanations, or extra text outside of the HTML structure.
             ...
             
             DO NOT include any placeholders or lorem ipsum text - use only the information provided.
@@ -681,6 +683,7 @@ async def generate_resume(request: ResumeGenerationRequest):
         # שמירת הקובץ
         with open(full_path, "w", encoding="utf-8") as file:
             file.write(resume_text)
+        
         # Enhance HTML if needed
         if resume_format == 'html':
             # Import the required functions
@@ -695,6 +698,15 @@ async def generate_resume(request: ResumeGenerationRequest):
             temp_builder.resume_style = resume_style
             # Enhance the HTML file
             temp_builder._enhance_html_resume(full_path)
+
+            # שמירת הקובץ לפונקצית התרגום
+            with open(full_path, "r", encoding="utf-8") as file:
+                resume_content = file.read()
+                
+            # שמירת התוכן במופע
+            resume_builder_instance.resume_content = resume_content
+            resume_builder_instance.resume_mime_type = "text/html" if resume_format == 'html' else "text/plain"
+
 
             # שמירת שם הקובץ לשימוש מאוחר יותר
             resume_builder_instance.resume_filename = filename
@@ -720,6 +732,8 @@ async def generate_resume(request: ResumeGenerationRequest):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error generating resume: {str(e)}")
+    
+    # 2. הוספת נקודת קצה חדשה להורדת הקובץ
 
 @app.get("/api/download-resume")
 async def download_resume(filename: str = None):
@@ -750,44 +764,28 @@ async def download_resume(filename: str = None):
     )
     
 
-
-
-
-        
-        
-
-
-
-
-@app.post("/api/translate-resume")
+# באקאנד - עדכון הפונקציה translate_resume בקובץ resume_builder_api.py
+@app.post("/api/translate-resume")  # בלי /api בתחילה
 async def translate_resume(request: TranslationRequest):
     """
     Translate the resume to another language
     """
     global resume_builder_instance
     
-    if not resume_builder_instance:
-        raise HTTPException(status_code=400, detail="Session not initialized")
+    if not resume_builder_instance or not hasattr(resume_builder_instance, 'resume_content'):
+        raise HTTPException(status_code=400, detail="No resume has been generated yet")
     
     try:
-        # Extract the base filename without extension
-        base_filename = os.path.splitext(request.filename)[0]
-        extension = os.path.splitext(request.filename)[1]
+        # התוכן המקורי של קורות החיים
+        original_content = resume_builder_instance.resume_content
         
-        # Generate the translated filename
+        # ייצור שם הקובץ המתורגם
+        base_filename = os.path.splitext(resume_builder_instance.resume_filename)[0]
+        extension = os.path.splitext(resume_builder_instance.resume_filename)[1]
         language_suffix = request.target_language.lower().replace(' ', '')
         translated_filename = f"{base_filename}_{language_suffix}{extension}"
         
-        # Get desktop path for file location
-        desktop_path = os.path.expanduser("~/Desktop")
-        full_original_path = os.path.join(desktop_path, request.filename)
-        translated_path = os.path.join(desktop_path, translated_filename)
-        
-        # Read the original file
-        with open(full_original_path, 'r', encoding='utf-8') as file:
-            original_content = file.read()
-        
-        # Create translation instructions
+        # יצירת הוראות תרגום
         instructions = f"""
         Translate the following resume content to {request.target_language}.
         
@@ -805,7 +803,7 @@ async def translate_resume(request: TranslationRequest):
         For technical terms in {request.target_language}, use the standard industry terminology.
         """
         
-        # Call OpenAI API for translation
+        # קריאה ל-OpenAI API לתרגום
         import openai
         translate_response = openai.chat.completions.create(
             model="gpt-4-turbo-preview",
@@ -817,10 +815,10 @@ async def translate_resume(request: TranslationRequest):
             max_tokens=4000,
         )
         
-        # Get translated content
+        # קבלת התוכן המתורגם
         translated_content = translate_response.choices[0].message.content
         
-        # Check for RTL languages
+        # טיפול בשפות RTL אם צריך
         rtl_languages = ['hebrew', 'עברית', 'arabic', 'ערבית', 'farsi', 'פרסית', 'urdu', 'אורדו']
         if any(lang in request.target_language.lower() for lang in rtl_languages):
             if extension.lower() == '.html':
@@ -873,18 +871,58 @@ async def translate_resume(request: TranslationRequest):
                 # For text files, add RTL note
                 translated_content = f"<כיוון טקסט מימין לשמאל>\n\n{translated_content}"
         
-        # Save the translated file
-        with open(translated_path, "w", encoding="utf-8") as file:
-            file.write(translated_content)
+        # שמירת הגרסה המתורגמת לשימוש מאוחר יותר
+        resume_builder_instance.translated_content = translated_content
+        resume_builder_instance.translated_filename = translated_filename
+        resume_builder_instance.translated_mime_type = resume_builder_instance.resume_mime_type  # אותו סוג כמו המקורי
+        
+        # ייצור כתובת להורדת הקובץ המתורגם
+        download_url = f"/download-translated-resume?filename={translated_filename}"
         
         return {
             "status": "success",
             "message": f"Resume translated to {request.target_language}",
             "translated_filename": translated_filename,
-            "path": translated_path
+            "download_url": download_url  # הוספת כתובת URL להורדה
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error translating resume: {str(e)}")
+
+# הוספת נקודת קצה להורדת הקובץ המתורגם
+@app.get("/api/download-translated-resume")  # בלי /api בתחילה
+async def download_translated_resume(filename: str = None):
+    """
+    Download the translated resume
+    """
+    global resume_builder_instance
+    
+    if not resume_builder_instance or not hasattr(resume_builder_instance, 'translated_content'):
+        raise HTTPException(status_code=400, detail="No translated resume is available")
+    
+    try:
+        # יצירת תגובה עם התוכן המתורגם
+        content = resume_builder_instance.translated_content
+        filename = resume_builder_instance.translated_filename
+        mime_type = resume_builder_instance.translated_mime_type
+        
+        # יצירת קובץ זמני
+        temp_dir = tempfile.gettempdir()
+        temp_path = os.path.join(temp_dir, filename)
+        
+        # שמירת התוכן לקובץ זמני
+        with open(temp_path, 'w', encoding='utf-8') as f:
+            f.write(content)
+        
+        # שליחת הקובץ להורדה
+        return FileResponse(
+            path=temp_path,
+            filename=filename,
+            media_type=mime_type,
+            content_disposition_type="attachment"
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error downloading translated resume: {str(e)}")
+    
 
 @app.get("/")
 async def root():
