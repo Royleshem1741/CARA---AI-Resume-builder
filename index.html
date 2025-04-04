@@ -160,6 +160,7 @@
         .btn:hover {
             background-color: #2b83bd;
         }
+
         /* Only add these new styles for the arrow */
         .arrow {
             margin-left: 6px;
@@ -288,11 +289,36 @@
             border-radius: 4px;
             display: none;
         }
-
-        .feedback-icon {
-            color: var(--info-color);
-            margin-right: 0.5rem;
+        /* אנימציית נקודות מהבהבות */
+        .dots-loader {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 15px 0;
         }
+
+        .dots-loader .dot {
+            width: 8px;
+            height: 8px;
+            margin: 0 4px;
+            background-color: var(--primary-color, #3498db);
+            border-radius: 50%;
+            animation: dotPulse 1.5s infinite ease-in-out;
+        }
+
+        .dots-loader .dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .dots-loader .dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes dotPulse {
+            0%, 100% { transform: scale(0.5); opacity: 0.5; }
+            50% { transform: scale(1); opacity: 1; }
+        }
+
 
         .card {
             background: white;
@@ -493,6 +519,55 @@
                 transform: rotate(360deg);
             }
         }
+
+        /* מסמך בהבנייה עם אפקט מילוי */
+        .document-progress {
+        width: 80px;
+        height: 100px;
+        position: relative;
+        margin: 0 auto 10px;
+        }
+
+        .document-bg {
+        width: 100%;
+        height: 100%;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .document-header {
+        height: 10px;
+        background: var(--primary-color, #3498db);
+        opacity: 0.7;
+        margin: 5px;
+        border-radius: 2px;
+        }
+
+        .document-line {
+        height: 4px;
+        background: #eee;
+        margin: 8px 5px;
+        border-radius: 2px;
+        }
+
+        .progress-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 0;
+        background: rgba(52, 152, 219, 0.1);
+        border-radius: 4px;
+        animation: documentFill 2.5s infinite;
+        }
+
+        @keyframes documentFill {
+        0% { height: 0; }
+        100% { height: 100%; }
+        }
+
 
         .loading-container {
             text-align: center;
@@ -948,10 +1023,6 @@
                 min-height: 100px;
             }
             
-            .feedback-container {
-                padding: 0.8rem;
-            }
-            
             /* התאמת המודלים */
             .modal-content {
                 margin: 0;
@@ -1003,147 +1074,135 @@
         }
 
         /* === שיפורים ספציפיים למובייל === */
-@media (max-width: 768px) {
-    /* הטמעת תחושת אפליקציה */
-    body {
-        -webkit-tap-highlight-color: transparent;
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        user-select: none;
-    }
-    
-    /* כפתורים מעוגלים יותר ושיפור חווית הלחיצה */
-    .btn, input[type="submit"] {
-        border-radius: 12px;
-        touch-action: manipulation;
-        position: relative;
-        overflow: hidden;
-        transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s;
-    }
-    
-    /* אפקט גלים בלחיצה על כפתור */
-    .btn:active {
-        transform: scale(0.97);
-        box-shadow: 0 1px 2px rgba(0,0,0,0.2);
-    }
-    
-    /* אפקט הבהוב מינימלי בלחיצה */
-    .btn:active::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: rgba(255,255,255,0.2);
-        animation: button-flash 0.4s forwards;
-    }
-    
-    @keyframes button-flash {
-        0% { opacity: 1; }
-        100% { opacity: 0; }
-    }
-    
-    /* כפתורים גדולים יותר לאצבעות */
-    .follow-up-actions .btn,
-    .modal-footer .btn {
-        min-height: 44px; /* גודל מינימלי לאזור נגיעה */
-        border-radius: 12px;
-    }
-    
-    /* כפתור התחלה בולט יותר */
-    #start-interview-btn {
-        border-radius: 16px;
-        box-shadow: 0 3px 8px rgba(52, 152, 219, 0.3);
-    }
-    
-    /* פריטי יכולות מעוגלים יותר */
-    .skill-item {
-        border-radius: 12px;
-        touch-action: manipulation;
-        transition: all 0.2s;
-    }
-    
-    .skill-item:active {
-        transform: scale(0.97);
-    }
-    
-    /* מרחב טוב יותר בין שדות קלט */
-    input, select, textarea {
-        margin-bottom: 1rem;
-    }
-    
-    /* התאמת תיבת פידבק */
-    .feedback-container {
-        margin-top: 0.8rem;
-        margin-bottom: 0.8rem;
-    }
-    
-    /* שיפור מראה היכולות */
-    .skill-item {
-        padding: 0.5rem 0.9rem;
-        margin-bottom: 0.5rem;
-    }
-    
-    /* נראות כרטיסים במסך תוצאות */
-    #resume-success .card {
-        margin-bottom: 1rem;
-    }
-    
-    /* חלון דו-שיח מותאם יותר */
-    .modal {
-        align-items: flex-end;
-    }
-    
-    /* התאמה לטלפון של חלון תיקון תשובה */
-    #edit-modal .modal-content {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        margin: 0;
-        max-height: 80vh;
-        overflow-y: auto;
-        border-radius: 15px 15px 0 0;
-        padding-bottom: 2rem; /* מרווח עבור כפתורים */
-    }
-    
-    /* מודל תרגום מותאם יותר */
-    #translate-modal .modal-content {
-        height: auto;
-        max-height: 90vh;
-    }
-    
-    /* שיפור תצוגת תיאום איימיל במובייל */
-    .email-step {
-        display: block;
-        margin-bottom: 0.8rem;
-    }
-    
-    .email-platform {
-        margin-bottom: 2rem;
-    }
-}
+        @media (max-width: 768px) {
+            /* הטמעת תחושת אפליקציה */
+            body {
+                -webkit-tap-highlight-color: transparent;
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+                user-select: none;
+            }
+            
+            /* כפתורים מעוגלים יותר ושיפור חווית הלחיצה */
+            .btn, input[type="submit"] {
+                border-radius: 12px;
+                touch-action: manipulation;
+                position: relative;
+                overflow: hidden;
+                transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s;
+            }
+            
+            /* אפקט גלים בלחיצה על כפתור */
+            .btn:active {
+                box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            }
+            
+            /* אפקט הבהוב מינימלי בלחיצה */
+            .btn:active::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(62, 62, 62, 0.2);
+            }
+            
+            @keyframes button-flash {
+                0% { opacity: 1; }
+                100% { opacity: 0; }
+            }
+            
+            /* כפתורים גדולים יותר לאצבעות */
+            .follow-up-actions .btn,
+            .modal-footer .btn {
+                min-height: 44px; /* גודל מינימלי לאזור נגיעה */
+                border-radius: 12px;
+            }
+            
+            /* כפתור התחלה בולט יותר */
+            #start-interview-btn {
+                border-radius: 16px;
+                box-shadow: 0 3px 8px rgba(52, 152, 219, 0.3);
+            }
+            
+            /* פריטי יכולות מעוגלים יותר */
+            .skill-item {
+                border-radius: 12px;
+                touch-action: manipulation;
+                transition: all 0.2s;
+            }
+            
+            /* מרחב טוב יותר בין שדות קלט */
+            input, select, textarea {
+                margin-bottom: 1rem;
+            }
 
-/* === שיפורים כלליים שיעזרו גם במובייל === */
-/* שיפור נראות גופנים */
-@media (max-width: 768px) {
-    body {
-        text-size-adjust: 100%; /* מונע שינוי גודל גופן אוטומטי במובייל */
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-    }
-    
-    /* מעברים חלקים יותר בין מסכים */
-    .welcome-screen, .interview-screen, .review-screen, .generate-screen, .results-screen {
-        transition: opacity 0.3s ease;
-    }
-    
-    /* אנימציה משופרת */
-    .fade-in {
-        animation-duration: 0.3s;
-    }
-}
+            /* שיפור מראה היכולות */
+            .skill-item {
+                padding: 0.5rem 0.9rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            /* נראות כרטיסים במסך תוצאות */
+            #resume-success .card {
+                margin-bottom: 1rem;
+            }
+            
+            /* חלון דו-שיח מותאם יותר */
+            .modal {
+                align-items: flex-end;
+            }
+            
+            /* התאמה לטלפון של חלון תיקון תשובה */
+            #edit-modal .modal-content {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                margin: 0;
+                max-height: 80vh;
+                overflow-y: auto;
+                border-radius: 15px 15px 0 0;
+                padding-bottom: 2rem; /* מרווח עבור כפתורים */
+            }
+            
+            /* מודל תרגום מותאם יותר */
+            #translate-modal .modal-content {
+                height: auto;
+                max-height: 90vh;
+            }
+            
+            /* שיפור תצוגת תיאום איימיל במובייל */
+            .email-step {
+                display: block;
+                margin-bottom: 0.8rem;
+            }
+            
+            .email-platform {
+                margin-bottom: 2rem;
+            }
+        }
+
+        /* === שיפורים כלליים שיעזרו גם במובייל === */
+        /* שיפור נראות גופנים */
+        @media (max-width: 768px) {
+            body {
+                text-size-adjust: 100%; /* מונע שינוי גודל גופן אוטומטי במובייל */
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+            
+            /* מעברים חלקים יותר בין מסכים */
+            .welcome-screen, .interview-screen, .review-screen, .generate-screen, .results-screen {
+                transition: opacity 0.3s ease;
+            }
+            
+            /* אנימציה משופרת */
+            .fade-in {
+                animation-duration: 0.3s;
+            }
+        }
 
     </style>
 </head>
@@ -1211,10 +1270,22 @@
                     <textarea id="answer-input" placeholder="Type your answer here..."></textarea>
                 </div>
                 
-                <div id="feedback-container" class="feedback-container">
-                    <i class="fas fa-lightbulb feedback-icon"></i>
-                    <span id="feedback-text">This is where feedback on your answer will appear.</span>
+                <div id="feedback-container" class="feedback-container" style="display: none;">
+                    <!-- Loading dots (will be shown during processing) -->
+                    <div id="feedback-loading" style="display: none; text-align: center;">
+                        <div class="dots-loader">
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </div>
+                    <!-- Feedback content (will be shown after processing) -->
+                    <div id="feedback-content">
+                        <span id="feedback-text">This is where feedback on your answer will appear.</span>
+                    </div>
                 </div>
+
+            
             </div>
             
             <div class="btn-group">
@@ -1321,9 +1392,18 @@
             </header>
             
             <div class="loading-container" id="resume-loading">
-                <div class="loading-spinner"></div>
+                <div class="document-progress">
+                  <div class="document-bg">
+                    <div class="document-header"></div>
+                    <div class="document-line"></div>
+                    <div class="document-line"></div>
+                    <div class="document-line"></div>
+                    <div class="document-line"></div>
+                  </div>
+                  <div class="progress-overlay"></div>
+                </div>
                 <p class="loading-text">Creating your professional resume...</p>
-            </div>
+              </div>
             
             <div id="resume-success" class="hidden">
                 <div class="card">

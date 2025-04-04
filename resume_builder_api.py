@@ -339,7 +339,7 @@ async def save_answer(index: int, response: QuestionResponse):
                     )
                     
                     feedback_message = feedback_response.choices[0].message.content.strip()
-                    feedback = {"message": f"👉 {feedback_message}"}
+                    feedback = {"message": f"💡 {feedback_message}"}
                 except Exception as feedback_error:
                     # If feedback generation fails, continue without it
                     pass

@@ -1,5 +1,5 @@
         // API Configuration
-        const API_BASE_URL = 'https://cara-ai-resume-builder.onrender.com/api';
+        const API_BASE_URL = 'http://localhost:8000/api';
 
         // השלמה אוטומטית לשדה job-role
         const autocompleteStyle = `
@@ -203,6 +203,27 @@
         }
         });
 
+        // פונקציה שמדמה הקלדה של טקסט אות אחר אות
+        function typeText(element, text, speed = 30) {
+            return new Promise((resolve) => {
+                let i = 0;
+                element.textContent = '';
+                
+                function type() {
+                    if (i < text.length) {
+                        element.textContent += text.charAt(i);
+                        i++;
+                        setTimeout(type, speed);
+                    } else {
+                        resolve();
+                    }
+                }
+                
+                type();
+            });
+        }
+
+
         // Main application class
         class ResumeBuilder {
             constructor() {
@@ -391,47 +412,77 @@
                 }
             }
             
-            // Navigate to the next question
             async nextQuestion() {
-                // Save current answer
+                // שמירת השאלה והתשובה הנוכחית
                 const currentQuestion = this.questions[this.currentQuestionIndex];
                 const answer = document.getElementById('answer-input').value.trim();
                 
                 try {
-                    // Send answer to the backend
+                    // הצג את אינדיקטור הטעינה והסתר את תוכן הפידבק
+                    const feedbackContainer = document.getElementById('feedback-container');
+                    feedbackContainer.style.display = 'block';
+                    document.getElementById('feedback-loading').style.display = 'block';
+                    document.getElementById('feedback-content') && (document.getElementById('feedback-content').style.display = 'none');
+                    document.getElementById('feedback-text').style.display = 'none';
+                    
+                    // שלח את התשובה לבקאנד
                     const saveResponse = await this.apiRequest(`answer/${this.currentQuestionIndex}`, 'POST', {
                         key: currentQuestion.key,
                         answer: answer
                     });
                     
-                    // Save locally as well
+                    // שמור מקומית
                     this.userData[currentQuestion.key] = answer;
                     
-                    // Check for feedback
+                    // הסתר את אינדיקטור הטעינה
+                    document.getElementById('feedback-loading').style.display = 'none';
+                    
+                    // בדוק אם יש פידבק
                     if (saveResponse.feedback) {
-                        const feedbackContainer = document.getElementById('feedback-container');
-                        feedbackContainer.style.display = 'block';
-                        document.getElementById('feedback-text').textContent = saveResponse.feedback.message;
+                        const feedbackTextElement = document.getElementById('feedback-text');
+                        feedbackTextElement.style.display = 'inline-block';
+                        
+                        if (document.getElementById('feedback-content')) {
+                            document.getElementById('feedback-content').style.display = 'block';
+                        }
+                        
+                        // הקלדת הטקסט של הפידבק בהדרגה
+                        await typeText(feedbackTextElement, saveResponse.feedback.message);
+                        
+                        // אם יש גם שאלת מעקב, נמתין רגע קל נוסף לפני שנציג אותה
+                        if (saveResponse.followup) {
+                            // המתן 500 מילישניות נוספות אחרי סיום ההקלדה לפני הצגת שאלת המעקב
+                            setTimeout(() => {
+                                this.showFollowUpQuestion(saveResponse.followup, currentQuestion.key);
+                            }, 500);
+                            return; // אל תמשיך לשאלה הבאה עד שהמעקב יושלם
+                        }
+                    } else {
+                        // אם אין פידבק, הסתר את המיכל
+                        feedbackContainer.style.display = 'none';
+                        
+                        // בדוק אם יש שאלת מעקב
+                        if (saveResponse.followup) {
+                            this.showFollowUpQuestion(saveResponse.followup, currentQuestion.key);
+                            return; // אל תמשיך לשאלה הבאה עד שהמעקב יושלם
+                        }
                     }
                     
-                    // Check for follow-up question
-                    if (saveResponse.followup) {
-                        // Show follow-up question in a modal or directly in the UI
-                        this.showFollowUpQuestion(saveResponse.followup, currentQuestion.key);
-                        return; // Don't proceed to next question until follow-up is answered
-                    }
-                    
-                    // Normal flow - proceed to next question
-                    // Check if we're at the end
+                    // תהליך רגיל - המשך לשאלה הבאה
+                    // בדוק אם הגענו לסוף
                     if (this.currentQuestionIndex >= this.questions.length - 1) {
                         this.finishInterview();
                         return;
                     }
                     
-                    // Move to next question
+                    // עבור לשאלה הבאה
                     this.currentQuestionIndex++;
                     this.updateQuestionUI();
                 } catch (error) {
+                    // הסתר את אינדיקטור הטעינה במקרה של שגיאה
+                    document.getElementById('feedback-loading').style.display = 'none';
+                    feedbackContainer.style.display = 'none';
+                    
                     if (error.message.includes('Invalid email format')) {
                         this.showNotification('Please enter a valid email address', 'error');
                     } else {
@@ -439,7 +490,7 @@
                     }
                 }
             }
-
+            
             // Handle follow-up questions
             showFollowUpQuestion(followup, originalKey) {
                 // Create modal or inline display for follow-up
