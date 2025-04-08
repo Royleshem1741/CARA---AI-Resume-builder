@@ -1,5 +1,5 @@
         // API Configuration
-        const API_BASE_URL = 'https://cara-ai-resume-builder.onrender.com/api';
+        const API_BASE_URL = 'http://localhost:8000/api';
 
         // השלמה אוטומטית לשדה job-role
         const autocompleteStyle = `
@@ -418,6 +418,26 @@
                 const answer = document.getElementById('answer-input').value.trim();
                 
                 try {
+                    // השבת את כל כפתורי הניווט בזמן עיבוד
+                    const nextButton = document.getElementById('next-question-btn');
+                    const skipButton = document.getElementById('skip-question-btn');
+                    const prevButton = document.getElementById('previous-question-btn');
+                    
+                    // השבתת כפתור Next
+                    nextButton.disabled = true;
+                    nextButton.style.opacity = "0.6";
+                    nextButton.style.cursor = "not-allowed";
+                    
+                    // השבתת כפתור Skip
+                    skipButton.disabled = true;
+                    skipButton.style.opacity = "0.6";
+                    skipButton.style.cursor = "not-allowed";
+                    
+                    // השבתת כפתור Previous
+                    prevButton.disabled = true;
+                    prevButton.style.opacity = "0.6";
+                    prevButton.style.cursor = "not-allowed";
+                    
                     // הצג את אינדיקטור הטעינה והסתר את תוכן הפידבק
                     const feedbackContainer = document.getElementById('feedback-container');
                     feedbackContainer.style.display = 'block';
@@ -454,6 +474,8 @@
                             // המתן 500 מילישניות נוספות אחרי סיום ההקלדה לפני הצגת שאלת המעקב
                             setTimeout(() => {
                                 this.showFollowUpQuestion(saveResponse.followup, currentQuestion.key);
+                                // הפעל מחדש את כל הכפתורים אחרי הצגת שאלת המעקב
+                                this.enableNavigationButtons();
                             }, 500);
                             return; // אל תמשיך לשאלה הבאה עד שהמעקב יושלם
                         }
@@ -464,9 +486,14 @@
                         // בדוק אם יש שאלת מעקב
                         if (saveResponse.followup) {
                             this.showFollowUpQuestion(saveResponse.followup, currentQuestion.key);
+                            // הפעל מחדש את הכפתורים אחרי הצגת שאלת המעקב
+                            this.enableNavigationButtons();
                             return; // אל תמשיך לשאלה הבאה עד שהמעקב יושלם
                         }
                     }
+                    
+                    // הפעל מחדש את כל כפתורי הניווט
+                    this.enableNavigationButtons();
                     
                     // תהליך רגיל - המשך לשאלה הבאה
                     // בדוק אם הגענו לסוף
@@ -483,6 +510,9 @@
                     document.getElementById('feedback-loading').style.display = 'none';
                     feedbackContainer.style.display = 'none';
                     
+                    // הפעל מחדש את כל כפתורי הניווט גם במקרה של שגיאה
+                    this.enableNavigationButtons();
+                    
                     if (error.message.includes('Invalid email format')) {
                         this.showNotification('Please enter a valid email address', 'error');
                     } else {
@@ -490,6 +520,29 @@
                     }
                 }
             }
+            
+            // פונקציה חדשה להפעלה מחדש של כל כפתורי הניווט
+            enableNavigationButtons() {
+                const nextButton = document.getElementById('next-question-btn');
+                const skipButton = document.getElementById('skip-question-btn');
+                const prevButton = document.getElementById('previous-question-btn');
+                
+                // הפעלת כפתור Next
+                nextButton.disabled = false;
+                nextButton.style.opacity = "1";
+                nextButton.style.cursor = "pointer";
+                
+                // הפעלת כפתור Skip
+                skipButton.disabled = false;
+                skipButton.style.opacity = "1";
+                skipButton.style.cursor = "pointer";
+                
+                // הפעלת כפתור Previous
+                prevButton.disabled = false;
+                prevButton.style.opacity = "1";
+                prevButton.style.cursor = "pointer";
+            }
+
             
             // Handle follow-up questions
             showFollowUpQuestion(followup, originalKey) {
