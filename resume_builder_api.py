@@ -675,6 +675,17 @@ async def generate_resume(request: ResumeGenerationRequest):
         
         # Get the resume text
         resume_text = response.choices[0].message.content
+
+        # ניקוי תגיות markdown של html אם קיימות
+        if resume_format == 'html':
+            # הסרת ```html מתחילת הקובץ אם קיים
+            if resume_text.strip().startswith("```html"):
+                resume_text = resume_text.replace("```html", "", 1).strip()
+            
+            # הסרת ``` מסוף הקובץ אם קיים
+            if resume_text.strip().endswith("```"):
+                resume_text = resume_text[:resume_text.rfind("```")].strip()
+
         
         # במקום לשמור על הדסקטופ, נשמור בקובץ זמני
         temp_dir = tempfile.gettempdir()

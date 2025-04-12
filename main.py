@@ -1925,21 +1925,6 @@ class EnhancedResumeBuilder:
                         # Close the container div before the closing body tag
                         html_content = html_content.replace('</body>', '</div>\n</body>')
 
-                    # Keep the print button if not already there
-                    if '<button class="print-button"' not in html_content:
-                        print_button = """
-                    <button class="print-button" onclick="window.print()" style="position: fixed; bottom: 20px; left: 20px; background-color: #607D8B; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">Print Resume</button>
-                        """
-                        html_content = html_content.replace('</div>\n</body>', f'</div>\n{print_button}\n</body>')
-
-                    # Add save button and notification if not already there
-                    if '<button class="save-button"' not in html_content:
-                        save_elements = """
-                    <button class="save-button">Save Changes</button>
-                    <div class="save-notification">Changes saved!</div>
-                        """
-                        html_content = html_content.replace('</div>\n</body>', f'</div>\n{save_elements}\n</body>')
-
                     # Add the editing script if not already there
                     if 'document.addEventListener(\'DOMContentLoaded\'' not in html_content:
                         editing_script = """
@@ -1960,62 +1945,6 @@ class EnhancedResumeBuilder:
                                 });
                             });
                             
-                            // Initialize the change tracker
-                            window.resumeHasUnsavedChanges = false;
-                            
-                            // Save button functionality
-                            const saveButton = document.querySelector('.save-button');
-                            const saveNotification = document.querySelector('.save-notification');
-                            
-                            saveButton.addEventListener('click', function() {
-                                // Update original contents to reflect current state
-                                editableElements.forEach(function(element, index) {
-                                    originalContents[index] = element.innerHTML;
-                                });
-                                
-                                // Mark as saved
-                                window.resumeHasUnsavedChanges = false;
-                                
-                                // Store in localStorage
-                                try {
-                                    localStorage.setItem('savedResumeContent', document.documentElement.outerHTML);
-                                    localStorage.setItem('resumeSaveTime', new Date().toISOString());
-                                    
-                                    // Show notification
-                                    saveNotification.style.display = 'block';
-                                    setTimeout(function() {
-                                        saveNotification.style.display = 'none';
-                                    }, 3000);
-                                } catch (e) {
-                                    console.error('Error saving to localStorage:', e);
-                                    saveNotification.textContent = 'Error saving changes!';
-                                    saveNotification.style.backgroundColor = '#B22222';
-                                    saveNotification.style.display = 'block';
-                                    setTimeout(function() {
-                                        saveNotification.style.display = 'none';
-                                        saveNotification.textContent = 'Changes saved successfully!';
-                                        saveNotification.style.backgroundColor = '#2E8B57';
-                                    }, 3000);
-                                }
-                            });
-                            
-                            // Warning before leaving with unsaved changes
-                            window.addEventListener('beforeunload', function(e) {
-                                if (window.resumeHasUnsavedChanges) {
-                                    e.preventDefault();
-                                    e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
-                                    return e.returnValue;
-                                }
-                            });
-                            
-                            // Auto-save every 60 seconds if there are changes
-                            setInterval(function() {
-                                if (window.resumeHasUnsavedChanges) {
-                                    // Trigger click on save button
-                                    saveButton.click();
-                                }
-                            }, 60000);
-                        });
                     </script>
                     """
                         html_content = html_content.replace('</body>', f'{editing_script}\n</body>')
